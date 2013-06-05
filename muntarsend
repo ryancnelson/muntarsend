@@ -1,5 +1,10 @@
 #!/bin/sh
 
+### 6/5/2013:
+### this is a work in progress... it's not currently production-worthy, or 
+### even necessarily functional.
+
+
 ## this currently requires you hold my private key.
 ## nothing in this script is sensitive information
 
@@ -7,7 +12,23 @@ export MANTA_USER=ryancnelson
 export MANTA_KEY_ID=f3:04:66:7b:47:bc:40:f0:e6:e4:c2:01:39:23:a9:13
 MANTA_URL=https://us-east.manta.joyent.com
 
+while getopts u: opt; do
+	case $opt in
+	u)
+	  MANTA_USER=$OPTARG
+	  echo MANTA_USER = $MANTA_USER
+	;;
+
+	\?)
+	echo "Invalid option: -$OPTARG" >&2
+	exit 1
+	;;
+	esac
+
+done
+
 file=$1
+
 echo ------------------ $file
 
 remotesize=$(mls -l /ryancnelson/stor/3dprints/$file | awk '{print $4}' ) 
