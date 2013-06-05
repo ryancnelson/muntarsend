@@ -1,0 +1,29 @@
+#!/bin/sh
+
+## this currently requires you hold my private key.
+## nothing in this script is sensitive information
+
+export MANTA_USER=ryancnelson
+export MANTA_KEY_ID=f3:04:66:7b:47:bc:40:f0:e6:e4:c2:01:39:23:a9:13
+MANTA_URL=https://us-east.manta.joyent.com
+
+file=$1
+echo ------------------ $file
+
+remotesize=$(mls -l /ryancnelson/stor/3dprints/$file | awk '{print $4}' ) 
+if [ x$remotesize = "x" ] ; then remotesize=-1 ; fi
+localsize=$(ls -la $file  | awk '{print $5}' )
+if [ x$localsize = "x" ] ; then localsize=-1 ; fi
+echo localsize = $localsize
+echo remotesize = $remotesize
+if [ $remotesize -eq $localsize ] 
+  then 
+    echo "remote is same size as local.  exiting."
+    exit 0
+fi
+	
+
+
+/usr/local/bin/tar --transform='s/ /%20/g' -cvf /tmp/muntar-temp.tar "$file"  ; 
+###/usr/local/bin/tar -cvf /tmp/muntar-temp.tar "$file"  ; 
+muntar -v -u https://us-east.manta.joyent.com -f /tmp/muntar-temp.tar /ryancnelson/stor/3dprints
