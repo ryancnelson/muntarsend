@@ -72,7 +72,8 @@ if [ $remotesize -eq $localsize ]
 fi
 	
 
-
+### this is my local copy of gnu tar... required for the "transform" option
 /usr/local/bin/tar --transform='s/ /%20/g' -cvf /tmp/muntar-temp.tar "$file"  ; 
+
 ###/usr/local/bin/tar -cvf /tmp/muntar-temp.tar "$file"  ; 
 muntar -u https://us-east.manta.joyent.com -k $MANTA_KEY -f /tmp/muntar-temp.tar /${MANTA_USER}/stor/${remotedir}
