@@ -56,18 +56,35 @@ file=$1
 
 echo ------------------ $file
 
-remotesize=$(mls -k $MANTA_KEY -a $MANTA_USER -l /${MANTA_USER}/stor/${remotedir}/${file} | awk '{print $4}' ) 
+remotesize=$(mls -k $MANTA_KEY -a $MANTA_USER -j /${MANTA_USER}/stor/${remotedir}/${file} | json size ) 
 if [ x$remotesize = "x" ] ; then remotesize=-1 ; fi
+
+## if there's already something on the other side, calculate it's md5 hash
+if [ x$remotesize != "x" ] ; then
+	remotehash=$(mmd5 -k $MANTA_KEY -a $MANTA_USER /${MANTA_USER}/stor/${remotedir}/${file} | awk '{print $1}' ) 
+fi
 
 ### should use "stat" here, instead of ls -la and awk
 #localsize=$(ls -la $file  | awk '{print $5}' )
-localsize=$(stat -f %z test-upload)
+localsize=$(stat -f %z $file)
+
+## it shouldn't be possible for the file to exist, but not have a size...
+## eliminate this?
 if [ x$localsize = "x" ] ; then localsize=-1 ; fi
+
+## if there's something on the other side to compare it to, calculate the md5 on this side, too
+if [ x$remotesize != "x" ] ; then
+	localhash=$(cat ${file} | md5 ) 
+fi
+
 echo localsize = $localsize
 echo remotesize = $remotesize
-if [ $remotesize -eq $localsize ] 
+echo localhash = $localhash
+echo remotehash = $remotehash
+echo comparing sizes and hashes:
+if [ $remotesize -eq $localsize ] && [ $remotehash = $localhash ] 
   then 
-    echo "remote is same size as local.  exiting."
+    echo "remote seems to be identical to local.  exiting."
     exit 0
 fi
 	
