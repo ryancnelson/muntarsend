@@ -4,9 +4,10 @@
 ### this is a work in progress... it's not currently production-worthy, or 
 ### even necessarily functional.
 
+## example:
+#   muntarsend -a rnelson -k fd:9c:78:0f:bd:58:e0:88:38:01:93:3b:ab:80:a5:93 -d dump test-upload
+#  sends local file "test-upload" to the directory /rnelson/stor/dump , using the key provided
 
-## this currently requires you hold my private key.
-## nothing in this script is sensitive information
 
 ## set defaults in case they're not passed as arguments
 MANTA_USER=ryancnelson
