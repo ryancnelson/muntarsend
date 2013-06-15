@@ -61,7 +61,7 @@ if [ x$remotesize = "x" ] ; then remotesize=-1 ; fi
 
 ### should use "stat" here, instead of ls -la and awk
 #localsize=$(ls -la $file  | awk '{print $5}' )
-stat -f %z test-upload
+localsize=$(stat -f %z test-upload)
 if [ x$localsize = "x" ] ; then localsize=-1 ; fi
 echo localsize = $localsize
 echo remotesize = $remotesize
